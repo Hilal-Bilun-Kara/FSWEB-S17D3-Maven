@@ -1,6 +1,7 @@
 package com.workintech.zoo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.workintech.zoo.entity.Gender;
 import com.workintech.zoo.entity.Kangaroo;
 import com.workintech.zoo.entity.Koala;
 import com.workintech.zoo.exceptions.ZooErrorResponse;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@ExtendWith(ResultAnalyzer.class)
+@ExtendWith(com.workintech.s17d2.ResultAnalyzer.class)
 class MainTest {
 
 
@@ -44,8 +45,9 @@ class MainTest {
     @BeforeEach
     void setup() {
 
-        kangaroo = new Kangaroo(1, "Kenny", 2.0, 85.0, "Male", false);
-        koala = new Koala(1, "Kara", 20.0, 15.0, "Female");
+        kangaroo = new Kangaroo(20.0,true);
+        koala = new Koala(1,"Kara",15.0, Gender.FEMALE);
+
 
     }
 
@@ -53,7 +55,7 @@ class MainTest {
     @DisplayName("Test Kangaroo Creation and Field Access")
      void testKangarooCreationAndFieldAccess() {
 
-        Kangaroo kangaroo = new Kangaroo(1, "Kenny", 2.0, 85.0, "Male", false);
+        Kangaroo kangaroo = new Kangaroo(85.0,false);
 
 
         assertEquals(1, kangaroo.getId());
@@ -68,12 +70,12 @@ class MainTest {
     @DisplayName("Test Kangaroo Setters")
     void testKangarooSetters() {
 
-        Kangaroo kangaroo = new Kangaroo();
+        Kangaroo kangaroo = new Kangaroo(85.0, false);
         kangaroo.setId(2);
         kangaroo.setName("Kanga");
         kangaroo.setHeight(1.8);
         kangaroo.setWeight(70.0);
-        kangaroo.setGender("Female");
+        kangaroo.setGender(Gender.valueOf("female"));
         kangaroo.setIsAggressive(true);
 
 
@@ -89,7 +91,7 @@ class MainTest {
     @DisplayName("Test Koala AllArgsConstructor")
     void testKoalaAllArgsConstructor() {
         // Creating an instance using all-args constructor
-        Koala koala = new Koala(1, "Kara", 20.0, 15.0, "Female");
+        Koala koala = new Koala(1,"Kara",15.0, Gender.FEMALE);
 
         // Assertions to ensure fields are set correctly
         assertEquals(1, koala.getId());
@@ -106,9 +108,9 @@ class MainTest {
         Koala koala = new Koala();
         koala.setId(2);
         koala.setName("Kody");
-        koala.setSleepHour(22.0);
+        koala.setSleepHour((int) 22.0);
         koala.setWeight(12.5);
-        koala.setGender("Male");
+        koala.setGender(Gender.valueOf("Male"));
 
         // Assertions to check if setters worked through getters
         assertEquals(2, koala.getId(), "ID should match the set value.");
@@ -351,7 +353,7 @@ class MainTest {
     @Test
     @DisplayName("ZooGlobalExceptionHandler:HandleGenericException")
     void testHandleGenericException() throws Exception {
-    Kangaroo invalidKangaroo = new Kangaroo();
+    Kangaroo invalidKangaroo = new Kangaroo(85.0, false);
     mockMvc.perform(post("/kangaroos")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidKangaroo)))
